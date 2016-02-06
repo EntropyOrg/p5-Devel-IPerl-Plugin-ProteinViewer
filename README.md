@@ -11,6 +11,7 @@ SYNOPSIS
     [1] IPerl->load_plugin("ProteinViewer");
     ...
     [2] load_pdb("some.pdb",{foo_pvoption => foo, bar_pvoption => bar}); 
+```
 
 DESCRIPTION
 ============
