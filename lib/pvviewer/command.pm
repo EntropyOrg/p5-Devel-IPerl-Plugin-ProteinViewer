@@ -13,13 +13,25 @@ has 'terminate' => ( is => 'ro', isa => 'Bool', default=> 0);
 
 sub to_js {
   my $self = shift;
-  my $all_args = join(', ', map{_encode($_)} @{$self->args}); 
+  my @all_args = [join(', ', map{_encode($_)} @{$self->args})]; 
+  push _encode($self->kwargs), @all_args;
+
+  my $args_string = join(', ', @all_args);
+  my $t = $self->terminate ? ';' : '';
+  my $call;
+  unless ($self->receiver){
+    $call = $self->command;
+  }
+  else{
+    $call = sprintf("%s.%s", $self->receiver,$self->command);
+  }
+  return sprintf("%s(%s)%s", $call, $args_string,$self->command);
+  
 }
 
 sub _encode {
   my $obj  = shift;
   return $obj->to_js() if $obj->has_to_js;
-  
 }
 
 no Moose;
