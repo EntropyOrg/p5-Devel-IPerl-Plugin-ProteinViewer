@@ -14,7 +14,7 @@ has 'terminate' => ( is => 'ro', isa => 'Bool', default=> 0);
 sub to_js {
   my $self = shift;
   my @all_args = [join(', ', map{_encode($_)} @{$self->args})]; 
-  push _encode($self->kwargs), @all_args;
+  push @all_args, _encode($self->kwargs);
 
   my $args_string = join(', ', @all_args);
   my $t = $self->terminate ? ';' : '';
@@ -30,10 +30,14 @@ sub to_js {
 }
 
 sub _encode {
+  #this is pretty minimal for now.  wait for it to fail to rework
   my $obj  = shift;
   return $obj->to_js() if $obj->has_to_js;
+  return encode_json($obj) if ref($obj) eq 'HASH';
+  return JSON::MaybeXS->new->allow_nonref->encode($obj); 
 }
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
 }
+1;
